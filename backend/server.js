@@ -97,18 +97,10 @@ app.post("/analyze", async (req, res) => {
     console.log("🤖 Requesting Gemini Cyber Officer...");
     let ai = {};
     try {
-        // TEMPORARILY DISABLED FOR TESTING
-        // let raw = await aiAdvisory({ text, ml, vt, osint, age, struct, risk, verdict });
-        // raw = raw.replace(/```json|```/g, "").trim();
-        // ai = JSON.parse(raw);
-        console.log("🤖 Gemini Call Bypassed (Test Mode)");
-        ai = {
-            ThreatLevel: risk >= 60 ? "CRITICAL (MOCK)" : risk >= 30 ? "MODERATE (MOCK)" : "LOW (MOCK)",
-            RedFlags: ["Test Mode: AI checking is currently disabled for faster iterative testing."],
-            Why: `Engine Verdict: ${verdict}. Evaluation completed without external LLM processing.`,
-            Actions: ["Do not click the link", "Report to IT"],
-            FIR: "NO"
-        };
+        let raw = await aiAdvisory({ text, ml, vt, osint, age, struct, risk, verdict });
+        raw = raw.replace(/```json|```/g, "").trim();
+        ai = JSON.parse(raw);
+        console.log("🤖 Gemini Reasoning Delivered");
     } catch (e) {
         console.log("❌ Gemini AI Error:", e.message);
         ai = {

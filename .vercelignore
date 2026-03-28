@@ -1,0 +1,10 @@
+node_modules/
+backend/datasets/
+backend/uploads/
+*.csv
+.env
+.git/
+__pycache__/
+*.pyc
+env/
+.venv/

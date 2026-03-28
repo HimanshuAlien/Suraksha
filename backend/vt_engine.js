@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 
-const VT_KEY = "8d3b19dcb20e1059b5bd5441fffcb119fdf62fc7bbb45055c8e768071376d78a";
+const VT_KEY = process.env.VT_KEY;
 
 export async function vtCheck(url) {
     try {

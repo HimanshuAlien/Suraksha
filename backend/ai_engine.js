@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-const GEMINI_KEY = "AIzaSyCFCwim9oFrrOy6h_KRqh1RqICWXVzilRY";
+const GEMINI_KEY = process.env.GEMINI_API_KEY;
 
 export async function aiAdvisory(report) {
 

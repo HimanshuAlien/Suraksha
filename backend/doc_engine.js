@@ -2,7 +2,7 @@
 import fetch from "node-fetch";
 import fs from "fs";
 
-const GEMINI_KEY = process.env.GEMINI_API_KEY;
+const GEMINI_KEY = process.env.GEMINI_KEY || process.env.GEMINI_API_KEY;
 
 export async function scanDocument(path) {
     console.log("🧬 Gemini Vision Scanning…");

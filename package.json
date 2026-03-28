@@ -1,8 +1,8 @@
 {
-    "name": "backend",
+    "name": "suraksha",
     "version": "1.0.0",
     "type": "module",
-    "main": "server.js",
+    "main": "api/index.js",
     "dependencies": {
         "base45": "^2.0.1",
         "cors": "^2.8.5",

@@ -1,15 +1,13 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "backend/server.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "backend/server.js"
-    }
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/index.js" },
+    { "source": "/analyze", "destination": "/api/index.js" },
+    { "source": "/scan-doc", "destination": "/api/index.js" },
+    { "source": "/report", "destination": "/api/index.js" },
+    { "source": "/reports", "destination": "/api/index.js" },
+    { "source": "/api-status", "destination": "/api/index.js" },
+    { "source": "/", "destination": "/frontend/index.html" },
+    { "source": "/(.*)", "destination": "/frontend/$1" }
   ]
 }

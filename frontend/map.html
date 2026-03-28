@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>SURAKSHA National Cyber Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 100vh
+        }
+
+        .pulse {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 0, 0, .7)
+            }
+
+            70% {
+                box-shadow: 0 0 0 15px rgba(255, 0, 0, 0)
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 0, 0, 0)
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        const map = L.map('map').setView([22.5, 78.9], 5);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+        fetch("/reports")
+            .then(r => r.json())
+            .then(data => {
+                data.forEach(r => {
+                    const color = r.verdict == "PHISHING" ? "red" : r.verdict == "SUSPICIOUS" ? "orange" : "green";
+                    const icon = L.divIcon({
+                        className: 'pulse',
+                        html: `<div style="background:${color};width:18px;height:18px;border-radius:50%;"></div>`
+                    });
+                    L.marker([r.lat, r.lng], { icon }).addTo(map)
+                        .bindPopup(`<b>${r.verdict}</b><br>Risk:${r.risk}<br>${r.text}`);
+                });
+            });
+    </script>
+
+</body>
+
+</html>

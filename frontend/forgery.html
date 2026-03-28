@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>SURAKSHA – Document Forgery Scanner</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Segoe UI, Arial;
+            background: #f4f6fb;
+            color: #222;
+        }
+
+        header {
+            background: white;
+            padding: 18px;
+            text-align: center;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, .08);
+        }
+
+        .scanner {
+            max-width: 500px;
+            background: white;
+            margin: 40px auto;
+            padding: 20px;
+            border-radius: 14px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, .1);
+            text-align: center;
+        }
+
+        .preview {
+            width: 100%;
+            height: 260px;
+            border: 2px dashed #ccc;
+            border-radius: 12px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .preview img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        input[type=file] {
+            display: none;
+        }
+
+        .upload-btn,
+        .scan-btn {
+            padding: 12px 26px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 16px;
+        }
+
+        .upload-btn {
+            background: #2563eb;
+            color: white;
+        }
+
+        .scan-btn {
+            background: #16a34a;
+            color: white;
+        }
+
+        .scan-btn:disabled {
+            background: #aaa;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 14px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .safe {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .danger {
+            background: #fee2e2;
+            color: #7f1d1d;
+        }
+
+        .loader {
+            margin: 15px auto;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #ddd;
+            border-top: 4px solid #2563eb;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg)
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h2>SURAKSHA 🪪</h2>
+        <p>National Document Forgery & Fake ID Scanner</p>
+    </header>
+
+    <div class="scanner">
+
+        <input type="file" id="file" accept="image/*">
+
+        <div class="preview" id="preview">Upload Aadhaar / ID Image</div>
+
+        <button class="upload-btn" onclick="document.getElementById('file').click()">Select Document</button>
+        <button class="scan-btn" id="scanBtn" disabled onclick="scan()">Scan Document</button>
+
+        <div class="loader" id="loader"></div>
+
+        <div class="result" id="resultBox"></div>
+
+    </div>
+    <script>
+        const file = document.getElementById("file");
+        const preview = document.getElementById("preview");
+        const scanBtn = document.getElementById("scanBtn");
+        const loader = document.getElementById("loader");
+        const resultBox = document.getElementById("resultBox");
+
+        let imageFile = null;
+
+        file.onchange = e => {
+            imageFile = e.target.files[0];
+            const img = document.createElement("img");
+            img.src = URL.createObjectURL(imageFile);
+            preview.innerHTML = "";
+            preview.appendChild(img);
+            scanBtn.disabled = false;
+        };
+
+        async function scan() {
+            loader.style.display = "block";
+            resultBox.style.display = "none";
+
+            const fd = new FormData();
+            fd.append("image", imageFile);
+
+            const res = await fetch("/scan-doc", {
+                method: "POST",
+                body: fd
+            }).then(r => r.json());
+
+            loader.style.display = "none";
+            resultBox.style.display = "block";
+            resultBox.className = "result";
+
+            const text = res.aiText || "AI could not analyze this document.";
+
+            // Auto color based on Gemini language
+            if (text.toLowerCase().includes("forged") || text.toLowerCase().includes("fake")) {
+                resultBox.classList.add("danger");
+            } else {
+                resultBox.classList.add("safe");
+            }
+
+            resultBox.innerHTML = `
+        <b>AI Forensic Report:</b><br><br>
+        <pre style="white-space:pre-wrap;font-size:14px">${text}</pre>
+    `;
+        }
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Misinformation Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/misinfo-tracker.css">
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="header" style="display:flex; justify-content:space-between; align-items:center;">
+    <div class="logo">
+      <div class="logo-icon"></div>
+      SURAKSHA
+    </div>
+    <nav class="nav-group" style="display:flex; gap: 30px;">
+      <a href="index.html"
+        style="color:var(--text-secondary); text-decoration:none; font-family:var(--font-header); font-size:16px; letter-spacing:0.05em; font-weight:700; text-transform:uppercase;">Scanner</a>
+      <a href="misinfo.html"
+        style="color:var(--primary); text-decoration:none; font-family:var(--font-header); font-size:16px; letter-spacing:0.05em; font-weight:800; text-transform:uppercase; border-bottom: 2px solid var(--primary); padding-bottom: 4px;">Misinformation</a>
+      <a href="map.html"
+        style="color:var(--text-secondary); text-decoration:none; font-family:var(--font-header); font-size:16px; letter-spacing:0.05em; font-weight:700; text-transform:uppercase;">Heatmap</a>
+    </nav>
+  </header>
+
+  <!-- MAIN LAYOUT -->
+  <div class="tracker-layout">
+
+    <!-- LEFT PANEL: CHAT -->
+    <section class="panel chat-panel">
+      <div class="panel-header">
+        <h2>Investigation Assistant</h2>
+      </div>
+
+      <div class="chat-history" id="chatHistory">
+        <div class="message ai-message">
+          <div class="avatar ai-avatar">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="currentColor" fill-opacity="0.2" />
+              <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" />
+              <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" />
+              <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" />
+              <circle cx="12" cy="7" r="2" fill="currentColor">
+                <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite" />
+              </circle>
+            </svg>
+          </div>
+          <div class="bubble">
+            Hello. Paste your claim below.
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-input-area">
+        <div id="imagePreviewContainer" style="display:none;">
+          <img id="imagePreview" alt="Upload Preview" />
+          <button id="removeImageBtn" title="Remove attachment">×</button>
+        </div>
+        <div class="input-wrapper">
+          <input type="file" id="fileUpload" accept="image/*" style="display:none;" />
+          <button id="attachBtn" class="icon-btn" title="Upload Image/Document">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path
+                d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+            </svg>
+          </button>
+
+          <textarea id="chatInput" placeholder="Paste a claim, drop an image." rows="1"></textarea>
+
+          <button id="micBtn" class="icon-btn" title="Voice Input">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+              <line x1="12" y1="19" x2="12" y2="23" />
+              <line x1="8" y1="23" x2="16" y2="23" />
+            </svg>
+          </button>
+
+          <button id="sendBtn" class="icon-send-btn" title="Analyze">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="22" y1="2" x2="11" y2="13" />
+              <polygon points="22 2 15 22 11 13 2 9 22 2" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL: ANALYSIS -->
+    <section class="panel analysis-panel" id="analysisPanel">
+      <div class="panel-header">
+        <h2>Real-Time Intelligence</h2>
+        <span class="badge badge-outline">Awaiting Input</span>
+      </div>
+
+      <!-- INITIAL STATE -->
+      <div class="empty-state" id="emptyState">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+          </path>
+        </svg>
+        <p>Intelligence dashboard will populate automatically after analysis.</p>
+      </div>
+
+      <!-- LOADING STATE -->
+      <div class="loading-state" id="loadingState" style="display:none;">
+        <div
+          style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 20px;">
+          <div class="spinner"></div>
+          <div id="verifyTimer"
+            style="font-family: var(--font-header); font-size: 32px; font-weight: 800; color: var(--primary); letter-spacing: 0.05em; text-transform: uppercase;">
+            00:00:000</div>
+        </div>
+        <ul id="loadingSteps" class="loading-steps">
+          <!-- Steps injected via JS -->
+        </ul>
+      </div>
+
+      <!-- RESULTS STATE -->
+      <div class="results-state fade-in" id="resultsState" style="display:none;">
+
+        <!-- Score & Verdict Block -->
+        <div class="score-grid">
+          <div class="verdict-box" id="verdictBox">
+            <h1 id="finalVerdict">Likely False</h1>
+            <p id="claimBreakdown">Analysis of the stated claim.</p>
+          </div>
+
+          <div class="score-box">
+            <div class="circular-progress" id="scoreCircle">
+              <span class="progress-value" id="scoreValue">0</span>
+            </div>
+            <p class="score-label">Credibility Score</p>
+          </div>
+        </div>
+
+        <!-- Explanation -->
+        <div class="section-block">
+          <h3>AI Explanation</h3>
+          <p id="explanationText" class="explanation-text"></p>
+        </div>
+
+        <!-- Findings -->
+        <div class="section-block">
+          <h3>Key Findings</h3>
+          <ul id="findingsList" class="findings-list"></ul>
+        </div>
+
+        <!-- Sources -->
+        <div class="section-block">
+          <h3>Verified Sources</h3>
+          <div id="sourcesGrid" class="sources-grid">
+            <!-- Cards injected via JS -->
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
+
+  <script src="js/misinfo-tracker.js"></script>
+</body>
+
+</html>

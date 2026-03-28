@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SURAKSHA – National Cyber Defence AI</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg-base: #090909;
+      --bg-surface: #101012;
+      --bg-elevated: #18181c;
+      --bg-hover: #1e1e23;
+      --border: #27272d;
+      --border-subtle: #18181c;
+      --text-primary: #f5f5f7;
+      --text-secondary: #a1a1ad;
+      --text-muted: #5c5c6e;
+      --accent: #ededea;
+      --accent-warm: #cfc0a6;
+      --accent-dim: #2c2820;
+      --danger: #e06060;
+      --danger-dim: #2c1414;
+      --warn: #d99050;
+      --warn-dim: #281a0c;
+      --safe: #5aaa7a;
+      --safe-dim: #0c2018;
+      --radius-sm: 8px;
+      --radius: 14px;
+      --radius-lg: 20px;
+      --font-display: 'Outfit', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      background: var(--bg-base);
+      color: var(--text-primary);
+      font-family: var(--font-display);
+      font-size: 20px;
+      line-height: 1.6;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      background-image:
+        radial-gradient(ellipse 70% 40% at 50% -5%, rgba(210, 195, 165, 0.06) 0%, transparent 65%);
+    }
+
+    /* ─── LAYOUT ─────────────────────────────────────────── */
+    .container {
+      max-width: 80%;
+      margin: 0 auto;
+      padding: 0 32px 100px;
+    }
+
+    /* ─── HEADER ─────────────────────────────────────────── */
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 44px 0 44px;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 52px;
+    }
+
+    .header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .top h1 {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .top p {
+      font-size: 17px;
+      font-family: var(--font-mono);
+      font-weight: 300;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 8px 18px;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+      letter-spacing: 0.07em;
+      font-weight: 400;
+    }
+
+    .status-pill::before {
+      content: '';
+      display: block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--safe);
+      box-shadow: 0 0 10px var(--safe);
+      animation: pulse 2.4s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.35;
+      }
+    }
+
+    /* ─── SCANNER ────────────────────────────────────────── */
+    .scanner {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scanner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 5%, var(--accent-warm) 50%, transparent 95%);
+      opacity: 0.25;
+    }
+
+    .scan-header {
+      margin-bottom: 22px;
+    }
+
+    .scan-header h2 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--text-primary);
+      margin-bottom: 5px;
+    }
+
+    .scan-header p {
+      font-size: 17px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-weight: 300;
+      letter-spacing: 0.01em;
+    }
+
+    #userInput {
+      width: 100%;
+      background: var(--bg-base);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 1.75;
+      padding: 20px 22px;
+      resize: vertical;
+      min-height: 140px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      letter-spacing: 0.01em;
+    }
+
+    #userInput::placeholder {
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    #userInput:focus {
+      border-color: #38383e;
+      box-shadow: 0 0 0 4px rgba(210, 195, 165, 0.05);
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .primary-btn {
+      background: var(--accent);
+      color: #090909;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 14px 32px;
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+
+    .primary-btn:hover {
+      opacity: 0.85;
+      transform: translateY(-1px);
+    }
+
+    .primary-btn:active {
+      transform: translateY(0);
+      opacity: 0.7;
+    }
+
+    .reportBtn {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 28px;
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+
+    .reportBtn:hover {
+      border-color: #38383e;
+      color: var(--text-primary);
+      background: var(--bg-hover);
+    }
+
+    /* ─── RESULTS GRID ───────────────────────────────────── */
+    .results {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+    }
+
+    /* ─── CARDS ──────────────────────────────────────────── */
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card h3 {
+      font-size: 23px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      margin-bottom: 26px;
+    }
+
+    /* ─── THREAT SENSORS ─────────────────────────────────── */
+    .threat-sensors {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sensor-list {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .sensor-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .sensor-item:last-child {
+      border-bottom: none;
+    }
+
+    .sensor-label {
+      font-size: 15px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      letter-spacing: -0.01em;
+    }
+
+    .sensor-value {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--danger);
+      background: var(--danger-dim);
+      border: 1px solid rgba(224, 96, 96, 0.4);
+      border-radius: 5px;
+      padding: 5px 13px;
+      min-width: 78px;
+      text-align: center;
+      letter-spacing: 0.04em;
+      transition: all 0.3s;
+    }
+
+    .sensor-value.safe {
+      color: var(--safe);
+      background: var(--safe-dim);
+      border-color: rgba(90, 170, 122, 0.22);
+    }
+
+    .sensor-value.warn {
+      color: var(--warn);
+      background: var(--warn-dim);
+      border-color: rgba(217, 144, 80, 0.22);
+    }
+
+    .sensor-value.danger {
+      color: var(--danger);
+      background: var(--danger-dim);
+      border-color: rgba(224, 96, 96, 0.22);
+    }
+
+    /* ─── RISK CARD ──────────────────────────────────────── */
+    .risk-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .chart-container {
+      width: 180px;
+      height: 180px;
+      position: relative;
+      margin: 0 auto 22px;
+    }
+
+    .risk-text {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text-muted);
+      text-align: center;
+      letter-spacing: 0.03em;
+      line-height: 1.6;
+    }
+
+    /* ─── ADVISORY CARD ──────────────────────────────────── */
+    .advisory-card {
+      width: 100%;
+    }
+
+    .ai-response {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      min-height: 80px;
+      font-family: var(--font-mono);
+      font-weight: 300;
+      letter-spacing: 0.005em;
+    }
+
+    .ai-response:empty::before {
+      content: 'Security advisory will appear here after analysis...';
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────────── */
+    footer {
+      margin-top: 72px;
+      padding-top: 28px;
+      border-top: 1px solid var(--border-subtle);
+      text-align: center;
+    }
+
+    footer p {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 300;
+    }
+
+    #loaderOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(10px);
+      transition: all 0.5s ease;
+    }
+
+    #loaderOverlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loader-content {
+      text-align: center;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .pulse-ring {
+      width: 100px;
+      height: 100px;
+      border: 4px solid var(--danger);
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      animation: pulse-ring 1.5s infinite;
+    }
+
+    @keyframes pulse-ring {
+      0% {
+        transform: scale(0.8);
+        opacity: 1;
+        box-shadow: 0 0 0 0 rgba(224, 96, 96, 0.7);
+      }
+
+      70% {
+        transform: scale(1.1);
+        opacity: 0;
+        box-shadow: 0 0 0 40px rgba(224, 96, 96, 0);
+      }
+
+      100% {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+    }
+
+    .scan-timer {
+      font-family: var(--font-mono);
+      font-size: 40px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+    }
+
+    .scanning-title {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      color: var(--danger);
+      margin-bottom: 40px;
+    }
+
+    .scan-steps {
+      list-style: none;
+      text-align: left;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .scan-step {
+      font-family: var(--font-mono);
+      font-size: 16px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      opacity: 0.5;
+    }
+
+    .scan-step.active {
+      color: var(--text-primary);
+      font-weight: 500;
+      opacity: 1;
+    }
+
+    .scan-step.active::before {
+      content: '>';
+      color: var(--danger);
+      animation: blink 0.5s infinite;
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0;
+      }
+    }
+
+    .scanner-line {
+      width: 100%;
+      height: 2px;
+      background: var(--danger);
+      margin-top: 40px;
+      box-shadow: 0 0 20px var(--danger);
+      animation: scan-move 2s infinite alternate ease-in-out;
+    }
+
+    @keyframes scan-move {
+      from {
+        width: 0%;
+      }
+
+      to {
+        width: 100%;
+      }
+    }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .container {
+        max-width: 98% !important;
+        padding: 0 12px 64px !important;
+      }
+
+      .top {
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        gap: 20px !important;
+        padding: 40px 10px !important;
+      }
+
+      .nav-group {
+        width: 100% !important;
+        justify-content: center !important;
+        gap: 15px !important;
+        flex-wrap: wrap !important;
+      }
+
+      .nav-group a {
+        font-size: 13px !important;
+      }
+
+      .grid {
+        grid-template-columns: 1fr !important;
+      }
+
+      .scanner {
+        padding: 20px !important;
+      }
+
+      .card {
+        padding: 24px !important;
+      }
+
+      .button-group {
+        flex-direction: column !important;
+        width: 100% !important;
+      }
+
+      .primary-btn,
+      .reportBtn {
+        width: 100% !important;
+        text-align: center !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <!-- LOADING OVERLAY -->
+    <div id="loaderOverlay" class="hidden">
+      <div class="loader-content">
+        <div class="loader-header">
+          <div class="pulse-ring"></div>
+          <div id="scanTimer" class="scan-timer">00:00:000</div>
+        </div>
+        <div class="scanning-title">SYSTEM SCAN IN PROGRESS</div>
+        <ul id="scanSteps" class="scan-steps"></ul>
+        <div class="scanner-line"></div>
+      </div>
+    </div>
+
+    <!-- HEADER -->
+    <header class="top" style="display:flex; justify-content:space-between; align-items:center;">
+      <div class="header-left">
+        <h1>SURAKSHA </h1>
+        <p>National Cyber Threat Intelligence &amp; Safety Advisor</p>
+      </div>
+      <nav class="nav-group" style="display:flex; gap: 30px;">
+        <a href="index.html"
+          style="color:var(--text-primary); text-decoration:none; font-family:var(--font-header); font-size:16px; letter-spacing:0.05em; font-weight:800; text-transform:uppercase; border-bottom: 2px solid var(--accent); padding-bottom: 4px;">Scanner</a>
+        <a href="misinfo.html"
+          style="color:var(--text-secondary); text-decoration:none; font-family:var(--font-header); font-size:16px; letter-spacing:0.05em; font-weight:700; text-transform:uppercase;">Misinformation</a>
+        <a href="map.html"
+          style="color:var(--text-secondary); text-decoration:none; font-family:var(--font-header); font-size:16px; letter-spacing:0.05em; font-weight:700; text-transform:uppercase;">Heatmap</a>
+      </nav>
+    </header>
+
+    <!-- SCANNER -->
+    <section class="scanner">
+      <div class="scan-header">
+        <h2>Threat Analysis</h2>
+        <p>Paste suspicious content for verification</p>
+      </div>
+
+      <textarea id="userInput" placeholder="Paste SMS, WhatsApp message, website link, or email content..."></textarea>
+
+      <div class="button-group">
+        <button class="primary-btn" onclick="startScan()">
+          Analyze Threat
+        </button>
+        <button class="primary-btn" onclick="window.location.href='misinfo.html'"
+          style="background:var(--warn); color:var(--warn-dim);">
+          Misinfo Tracker ↗
+        </button>
+        <button class="reportBtn" onclick="reportScam()">
+          Report Scam
+        </button>
+      </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section class="results">
+
+      <div class="grid">
+
+        <!-- THREAT SENSORS -->
+        <div class="card threat-sensors">
+          <h3>Threat Sensors</h3>
+
+          <div class="sensor-list">
+            <div class="sensor-item">
+              <span class="sensor-label">ML Engine</span>
+              <span class="sensor-value" id="mlResult">—</span>
+            </div>
+            <div class="sensor-item">
+              <span class="sensor-label">VirusTotal</span>
+              <span class="sensor-value" id="vtResult">—</span>
+            </div>
+            <div class="sensor-item">
+              <span class="sensor-label">OSINT</span>
+              <span class="sensor-value" id="osintResult">—</span>
+            </div>
+            <div class="sensor-item">
+              <span class="sensor-label">Domain Age</span>
+              <span class="sensor-value" id="ageResult">—</span>
+            </div>
+            <div class="sensor-item">
+              <span class="sensor-label">Structural Risk</span>
+              <span class="sensor-value" id="structResult">—</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RISK SCORE -->
+        <div class="card risk-card">
+          <h3>Cyber Risk Score</h3>
+
+          <div class="chart-container">
+            <canvas id="riskChart"></canvas>
+          </div>
+
+          <p id="riskText" class="risk-text"></p>
+        </div>
+
+      </div>
+
+      <!-- AI RESPONSE -->
+      <div class="card advisory-card">
+        <h3>Security Advisory</h3>
+        <div id="aiResponse" class="ai-response"></div>
+      </div>
+
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <p>© 2026 SURAKSHA | Digital India Cyber Defence Mission</p>
+    </footer>
+
+  </div>
+
+  <script type="module" src="js/app.js?v=3"></script>
+</body>
+<!-- //microsoft.com / www.microsoft.com
+google.com / www.google.com
+apple.com / www.apple.com
+amazon.com / www.amazon.com
+http://kiit.ac.in (and subdirectories like http://kiit.ac.in/sap/)
+http://sbi.co.in
+http://github.com
+http://amazon.com
+http://microsoft.com
+http://apple.com
+paypal.com / www.paypal.com
+netflix.com / www.netflix.com -->
+
+</html>

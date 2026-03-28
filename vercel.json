@@ -1,17 +1,23 @@
 {
   "version": 2,
-  "outputDirectory": "frontend",
-  "rewrites": [
-    { "source": "/analyze", "destination": "/api/index.js" },
-    { "source": "/scan-doc", "destination": "/api/index.js" },
-    { "source": "/report", "destination": "/api/index.js" },
-    { "source": "/reports", "destination": "/api/index.js" },
-    { "source": "/api-status", "destination": "/api/index.js" },
-    { "source": "/api/(.*)", "destination": "/api/index.js" }
-  ],
-  "functions": {
-    "api/index.js": {
-      "includeFiles": "backend/**"
+  "builds": [
+    {
+      "src": "backend/server.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "frontend/**",
+      "use": "@vercel/static"
     }
-  }
+  ],
+  "rewrites": [
+    { "source": "/analyze", "destination": "/backend/server.js" },
+    { "source": "/scan-doc", "destination": "/backend/server.js" },
+    { "source": "/report", "destination": "/backend/server.js" },
+    { "source": "/reports", "destination": "/backend/server.js" },
+    { "source": "/api-status", "destination": "/backend/server.js" },
+    { "source": "/api/(.*)", "destination": "/backend/server.js" },
+    { "source": "/", "destination": "/frontend/index.html" },
+    { "source": "/(.*)", "destination": "/frontend/$1" }
+  ]
 }

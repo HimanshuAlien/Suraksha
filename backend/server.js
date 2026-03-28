@@ -2,9 +2,13 @@ import dotenv from "dotenv";
 dotenv.config();
 import mongoose from "mongoose";
 
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log("🗄 MongoDB Atlas Connected"))
-    .catch(() => console.log("⚠️ MongoDB Offline (Continuing without Database)"));
+if (process.env.MONGO_URI) {
+    mongoose.connect(process.env.MONGO_URI)
+        .then(() => console.log("🗄 MongoDB Atlas Connected"))
+        .catch(() => console.log("⚠️ MongoDB Offline (Continuing without Database)"));
+} else {
+    console.log("⚠️ MONGO_URI missing. Backend continuing in standalone mode.");
+}
 
 import express from "express";
 import cors from "cors";

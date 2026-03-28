@@ -37,7 +37,7 @@ app.use(express.json());
 // Mount Misinformation Tracker
 app.use("/api/misinfo", misinfoRouter);
 
-const upload = multer({ dest: "uploads/" });
+const upload = multer({ dest: process.env.VERCEL ? "/tmp" : "uploads/" });
 
 // Serve the frontend statically for deployment
 app.use(express.static(path.join(__dirname, "../frontend")));
@@ -66,7 +66,13 @@ app.post("/analyze", async (req, res) => {
     console.log("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
     console.log("📥 INCOMING THREAT REPORT:", text);
 
-    const ml = JSON.parse(execFileSync("python", ["ml_engine.py", text]));
+    let ml;
+    try {
+        ml = JSON.parse(execFileSync("python", ["ml_engine.py", text]));
+    } catch (e) {
+        console.log("⚠️ Python ML Engine unavailable (Vercel Node Runtime). Using Fallback.");
+        ml = { class: "Legit", prob: 0.1 };
+    }
     console.log("🧠 ML:", ml.class, "| Prob:", ml.prob);
 
     let vt = 0, osint = 0, age = 0, struct = 0;
@@ -155,4 +161,7 @@ app.get("/reports", async (_, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 SOC LIVE → http://localhost:${PORT}`));
+if (!process.env.VERCEL) {
+    app.listen(PORT, () => console.log(`🚀 SOC LIVE → http://localhost:${PORT}`));
+}
+export default app;

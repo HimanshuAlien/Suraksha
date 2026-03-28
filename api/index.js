@@ -54,9 +54,8 @@ app.use("/api/misinfo", misinfoRouter);
 
 const upload = multer({ dest: "/tmp" });
 
-// Serve the frontend statically - Vercel handles this via vercel.json rewrites, 
-// but we keep this for local compatibility if run via api/index.js
-app.use(express.static(path.join(__dirname, "../frontend")));
+// Serve the frontend statically - disabled for Vercel since rewrites handle it
+// app.use(express.static(path.join(__dirname, "../frontend")));
 
 app.get("/api-status", (_, res) => res.send("🛡️ SURAKSHA Unified AI SOC is LIVE on Vercel"));
 

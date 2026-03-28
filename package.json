@@ -3,6 +3,9 @@
     "version": "1.0.0",
     "type": "module",
     "main": "api/index.js",
+    "engines": {
+        "node": "20.x"
+    },
     "dependencies": {
         "base45": "^2.0.1",
         "cors": "^2.8.5",

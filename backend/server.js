@@ -43,8 +43,10 @@ app.use("/api/misinfo", misinfoRouter);
 
 const upload = multer({ dest: process.env.VERCEL ? "/tmp" : "uploads/" });
 
-// Serve the frontend statically for deployment
-// app.use(express.static(path.join(__dirname, "../frontend")));
+// Serve the frontend statically only when NOT on Vercel (local dev)
+if (!process.env.VERCEL) {
+    app.use(express.static(path.join(__dirname, "../frontend")));
+}
 
 // Health check endpoint just in case
 app.get("/api-status", (_, res) => res.send("🛡️ SURAKSHA National Cyber Defence AI API is LIVE"));
